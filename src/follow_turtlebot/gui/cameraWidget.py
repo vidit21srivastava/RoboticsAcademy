@@ -78,5 +78,5 @@ class CameraWidget(QtGui.QWidget):
         self.winParent.closeCameraWidget()
 
     def changeCamera(self):
-        self.winParent.getSensor().toggleCam()
+        self.winParent.getExtra().toggleCam()
         
