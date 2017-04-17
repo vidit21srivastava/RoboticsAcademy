@@ -16,7 +16,7 @@
 #  Authors :
 #       Alberto Martin Florido <almartinflorido@gmail.com>
 #
-import resources/resources_rc
+from resources import resources_rc
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt
 
