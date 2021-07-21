@@ -98,6 +98,19 @@ class Commands:
         gzclient_thread = DockerThread(gzclient_cmd)
         gzclient_thread.start()
 
+    # Function to start stdrclient
+    def start_stdr(self, exercise, width, height):
+    
+    if not (ACCELERATION_ENABLED):
+	    # Write display config and start gzclient
+            stdr_cmd = (f"export DISPLAY={self.DISPLAY};" + self.get_gazebo_path(exercise))
+        else:
+            stdr_cmd = (f"export DISPLAY={self.DISPLAY};" +
+		    self.get_gazebo_path(exercise) +
+		    "export VGL_DISPLAY=/dev/dri/card0; vglrun")
+        stdr_thread = DockerThread(stdr_cmd)
+        stdr_thread.start()
+
     # Function to stop gzclient
     def stop_gzclient(self):
         cmd_stop = ['pkill', '-f', 'gzclient']
@@ -196,6 +209,11 @@ class Commands:
                 except:
                     time.sleep(2)
 
+
+    def start_stdrserver(self,exercise):
+        roslaunch_cmd,gz_cmd = self.get_ros_instructions(exercise)
+        roslaunch_thread = DockerThread(roslaunch_cmd)
+        roslaunch_thread.start()
 
     # Function to pause Gazebo physics
     def pause_physics(self):
@@ -307,6 +325,9 @@ class Manager:
             elif command == "startgz":
                 self.start_gz()
                 await websocket.send("Ping{}".format(self.launch_level))
+            elif command == "startstdr":
+                self.start_stdrmessage()
+                await websocket.send("Ping{}".format(self.launch_level))
             elif "Pong" in command:
                 await websocket.send("Ping{}".format(self.launch_level))
             else:
@@ -321,7 +342,7 @@ class Manager:
         self.commands.start_xserver(":1")
 
         # Start the exercise
-        if exercise not in ["color_filter", "dl_digit_classifier", "human_detection"]:
+        if exercise not in ["color_filter", "dl_digit_classifier", "human_detection", "laser_mapping"]:
             self.commands.start_gzserver(exercise)
             self.commands.start_exercise(exercise)
             time.sleep(5)
@@ -334,6 +355,18 @@ class Manager:
             # Start gazebo client
             time.sleep(2)
             self.commands.start_console(width, height)
+
+        elif ("laser_mapping" in exercise):
+            self.commands.start_stdrserver(exercise)
+            self.commands.start_exercise(exercise)
+            time.sleep(5)
+            self.launch_level = 3
+
+            # Start x11vnc servers
+            self.commands.start_vnc(":0", 5900, 6080)
+            self.commands.start_vnc(":1", 5901, 1108)
+
+            self.commands.start_console(1920, 1080)
         else:
             self.commands.start_exercise(exercise)
             time.sleep(2)
@@ -353,7 +386,7 @@ class Manager:
         self.commands.start_vnc(":0", 5900, 6080)
 
         # Start the exercise
-        if exercise not in ["color_filter", "dl_digit_classifier", "human_detection"]:
+        if exercise not in ["color_filter", "dl_digit_classifier", "human_detection", "laser_mapping"]:
             self.commands.start_gzserver(exercise)
             self.commands.start_exercise(exercise)
             time.sleep(5)
@@ -364,6 +397,18 @@ class Manager:
             # Start gazebo client
             time.sleep(2)
             self.commands.start_console(width, height)
+
+        elif ("laser_mapping" in exercise):
+            self.commands.start_stdrserver(exercise)
+            self.commands.start_exercise(exercise)
+            time.sleep(5)
+            self.launch_level = 3
+
+            # Start x11vnc servers
+            self.commands.start_vnc(":0", 5900, 6080)
+            self.commands.start_vnc(":1", 5901, 1108)
+
+            self.commands.start_console(1920, 1080)
         else:
             self.commands.start_exercise(exercise)
             time.sleep(2)
@@ -395,6 +440,11 @@ class Manager:
     def start_gz(self):
         print("Starting Gzclient")
         self.commands.start_gzclient(self.exercise, self.width, self.height)
+    
+    # Function to start stdr
+    def start_stdrmessage(self):
+        print("Starting STDR")
+        self.commands.start_stdr(self.exercise, self.width, self.height)
 
     # Function to stop gz client
     def stop_gz(self):

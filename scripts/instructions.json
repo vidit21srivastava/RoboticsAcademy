@@ -86,6 +86,11 @@
         "instructions_ros": ["python3 ./RoboticsAcademy/exercises/drone_gymkhana/web-template/launch/launch.py"],
         "instructions_host": "python3 /RoboticsAcademy/exercises/drone_gymkhana/web-template/exercise.py 0.0.0.0"
     },
+    "laser_mapping": {
+        "gazebo_path": "/RoboticsAcademy/exercises/laser_mapping/web-template/launch",
+        "instructions_ros": ["/opt/ros/melodic/bin/roslaunch stdr_launchers ./RoboticsAcademy/exercises/laser_mapping/web-template/launch/amigobot.launch"],
+        "instructions_host": "python /RoboticsAcademy/exercises/laser_mapping/web-template/exercise.py 0.0.0.0"
+    },
     "visual_lander": {
         "gazebo_path": "/RoboticsAcademy/exercises/visual_lander/web-template/launch",
         "instructions_ros": ["python3 ./RoboticsAcademy/exercises/visual_lander/web-template/launch/launch.py"],
