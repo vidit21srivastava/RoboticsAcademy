@@ -9,6 +9,9 @@ import threading
 import time
 import json
 import stat
+import tempfile
+import re
+from pylint import epylint as lint
 
 # Function to check if a device exists
 def check_device(device_path):
@@ -307,6 +310,8 @@ class Manager:
             elif command == "startgz":
                 self.start_gz()
                 await websocket.send("Ping{}".format(self.launch_level))
+            elif command == "evaluate":                
+                await websocket.send("evaluate{}".format(self.evaluate_code(data["code"])))
             elif "Pong" in command:
                 await websocket.send("Ping{}".format(self.launch_level))
             else:
@@ -405,6 +410,42 @@ class Manager:
     async def kill_simulation(self):
         print("Kill simulation")
         await self.commands.kill_all()
+
+    def evaluate_code(self, code):
+        try:            
+            python_code = code
+            code_file = tempfile.NamedTemporaryFile(delete=False)
+            code_file.write(python_code.encode())
+            code_file.seek(0)
+            options = code_file.name + ' --enable=similarities' + " --disable=C0114,C0116"
+            (stdout, stderr) = lint.py_run(options, return_std=True)
+            code_file.seek(0)
+            code_file.close()
+            result = stdout.getvalue()
+            name = code_file.name.split('/')[-1]
+            result = result[(result.find(name) + len(name) - 1):result.find('---')]
+            result = result.replace(code_file.name, '')
+            result = result[result.find('\n'):]
+
+            # Removes import errors
+            import_exception = re.search(":\d: error.*import.*\n", result)
+            while (import_exception != None):
+                result = result[:import_exception.start()] + result[import_exception.end():]
+                import_exception = re.search(":\d: error.*import.*\n", result)
+
+            # Removes unexpected EOF error
+            eof_exception = re.search(":\d: error.*EOF.*\n", result)
+            if (eof_exception != None):
+                result = result[:eof_exception.start()] + result[eof_exception.end():]
+            
+            # Returns an empty string if there are no errors
+            error = re.search("error", result)
+            if (error == None):
+                return ""
+            else:
+                return result
+        except Exception as ex:
+            print(ex)
 
     # Function to start the websocket server
     def run_server(self):
