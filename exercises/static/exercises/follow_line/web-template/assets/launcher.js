@@ -29,7 +29,7 @@ function startSim(step) {
         radiConect.contentWindow.postMessage({connection: 'manager', command: 'up'}, '*');
         radiConect.contentWindow.postMessage({connection: 'exercise', command: 'available'}, '*');
     }
-
+    alert(ws_manager.readyState);
     ws_manager.onmessage = function (event) {
         //console.log(event.data);
         if (event.data.level > level) {

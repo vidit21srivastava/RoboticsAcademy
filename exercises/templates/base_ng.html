@@ -21,14 +21,19 @@
     <script>
         var radiConect = document.getElementById('radiConect')
         radiConect.contentWindow.postMessage('message', '*');
+        console.log("hola");
         window.onmessage = function(event){
+            console.log("hola2");
             if (event.data == 'connect') {
+                console.log("hola3");
                 try {
                     startSim(0);
+                    console.log("Sim 0");
                 }
                 catch (e) {
                     if (e instanceof ReferenceError)
                         radiConect.contentWindow.postMessage('down', '*');
+                        console.log("Error");
                 }
             } 
             else if (event.data == 'launch') {

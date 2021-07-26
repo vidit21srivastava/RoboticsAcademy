@@ -24,7 +24,11 @@ function declare_code(websocket_address){
 	websocket_code = new WebSocket("ws://" + websocket_address + ":1905/");
 
 	websocket_code.onopen = function(event){
-		alert("[open] Connection established!");
+		radiConect.contentWindow.postMessage({connection: 'exercise', command: 'launch_level', level: '5'}, '*');
+		if (websocket_gui.readyState == 1) {
+			alert("[open] Connection established!");
+			radiConect.contentWindow.postMessage({connection: 'exercise', command: 'up'}, '*');
+		}
 	}
 	websocket_code.onclose = function(event){
 		if(event.wasClean){
@@ -46,6 +50,7 @@ function declare_code(websocket_address){
 			// Parse GUI and Brain frequencies
 			document.querySelector("#ideal_gui_frequency").value = frequency_message.gui;
 			document.querySelector('#ideal_code_frequency').value = frequency_message.brain;
+			
 		}
 		
 		// Send the acknowledgment message along with frequency
@@ -58,13 +63,10 @@ function declare_code(websocket_address){
 
 // Function that sends/submits the code!
 function submitCode(){
+	try {
 	// Get the code from editor and add headers
     var python_code = editor.getValue();
     python_code = "#code\n" + python_code
-    
-    // Get the debug level and add header
-	var debug_level = document.querySelector('input[name = "debug"]').value;
-    python_code = "#dbug" + debug_level + python_code
     
     console.log("Code Sent! Check terminal for more information!");
     websocket_code.send(python_code);
@@ -74,6 +76,10 @@ function submitCode(){
 	stop_button.style.cursor = "default";
 	
 	running = true;
+	}
+	catch {
+		alert("Connection must be established before sending the code.")
+	}	
 }
 
 // Function that send/submits an empty string
