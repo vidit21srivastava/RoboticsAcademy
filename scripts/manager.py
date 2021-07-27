@@ -101,8 +101,8 @@ class Commands:
     # Function to start stdrclient
     def start_stdr(self, exercise, width, height):
     
-    if not (ACCELERATION_ENABLED):
-	    # Write display config and start gzclient
+        if not (ACCELERATION_ENABLED):
+	        # Write display config and start gzclient
             stdr_cmd = (f"export DISPLAY={self.DISPLAY};" + self.get_gazebo_path(exercise))
         else:
             stdr_cmd = (f"export DISPLAY={self.DISPLAY};" +
