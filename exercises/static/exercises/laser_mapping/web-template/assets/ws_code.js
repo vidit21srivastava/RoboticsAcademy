@@ -8,7 +8,7 @@ stop_button.disabled = true;
 stop_button.style.opacity = "0.4";
 stop_button.style.cursor = "not-allowed";
 
-// running variable for psuedo decoupling 
+// running variable for psuedo decoupling
 // Play/Pause from Reset
 var frequency = "0",
 	running = false;
