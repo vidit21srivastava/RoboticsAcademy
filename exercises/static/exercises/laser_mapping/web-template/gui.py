@@ -93,13 +93,13 @@ class GUI:
     # Function to read the message from websocket
     # Gets called when there is an incoming message from the client
     def get_message(self, client, server, message):
-		# Acknowledge Message for GUI Thread
-	    if(message[:4] == "#ack"):
-		    self.set_acknowledge(True)
-			
-		# Message for Console
-	    elif(message[:4] == "#con"):
-		    self.console.prompt(message)
+        # Acknowledge Message for GUI Thread
+        if(message[:4] == "#ack"):
+            self.set_acknowledge(True)
+            
+        # Message for Console
+        elif(message[:4] == "#con"):
+            self.console.prompt(message)
     
     # Activate the server
     def run_server(self):
@@ -168,8 +168,8 @@ class ThreadGUI:
         
     # The main thread of execution
     def run(self):
-    	while(self.gui.client == None):
-    		pass
+        while(self.gui.client == None):
+            pass
     
         while(True):
             start_time = datetime.now()
@@ -177,8 +177,8 @@ class ThreadGUI:
             acknowledge_message = self.gui.get_acknowledge()
             
             while(acknowledge_message == False):
-            	acknowledge_message = self.gui.get_acknowledge()
-            	
+                acknowledge_message = self.gui.get_acknowledge()
+                
             self.gui.set_acknowledge(False)
             
             finish_time = datetime.now()
@@ -188,3 +188,4 @@ class ThreadGUI:
             ms = (dt.days * 24 * 60 * 60 + dt.seconds) * 1000 + dt.microseconds / 1000.0
             if(ms < self.time_cycle):
                 time.sleep((self.time_cycle-ms) / 1000.0)
+

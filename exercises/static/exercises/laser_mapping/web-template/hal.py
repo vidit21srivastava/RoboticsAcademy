@@ -17,7 +17,7 @@ class HAL:
     def __init__(self):
         self.config = Config()
         self.motors = PublisherMotors(self.config.topic_motors, self.config.max_velV, self.config.max_velW)
-    	self.pose3d = ListenerPose3d(self.config.topic_pose)
+        self.pose3d = ListenerPose3d(self.config.topic_pose)
         self.sonar_0 = ListenerSonar(self.config.topic_sonar_0)
         self.sonar_1 = ListenerSonar(self.config.topic_sonar_1)
         self.sonar_2 = ListenerSonar(self.config.topic_sonar_2)
@@ -26,7 +26,7 @@ class HAL:
         self.sonar_5 = ListenerSonar(self.config.topic_sonar_5)
         self.sonar_6 = ListenerSonar(self.config.topic_sonar_6)
         self.sonar_7 = ListenerSonar(self.config.topic_sonar_7)
-    	self.laser = ListenerLaser(self.config.topic_laser)
+        self.laser = ListenerLaser(self.config.topic_laser)
 
     # Explicit initialization functions
     # Class method, so user can call it without instantiation
@@ -34,3 +34,4 @@ class HAL:
     def initRobot(cls):
         new_instance = cls()
         return new_instance
+
